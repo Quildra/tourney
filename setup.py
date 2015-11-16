@@ -7,4 +7,9 @@ setup(name='tourney',
     author='Quildra',
     license='MIT',
     packages=['tourney'],
-    zip_safe=false)
+    install_requires=[
+        'cherrypy',
+        'mako',
+        'SQLAlchemy',
+    ],
+    zip_safe=False)
