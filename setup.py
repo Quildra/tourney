@@ -11,5 +11,6 @@ setup(name='tourney',
         'cherrypy',
         'mako',
         'SQLAlchemy',
+        'ConfigObj'
     ],
     zip_safe=False)
