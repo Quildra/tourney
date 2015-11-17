@@ -9,10 +9,13 @@ import urllib
 import hashlib
 import binascii
 import os
+import tourney
 
 from cgi import escape
 
 from lib.models.user import User
+from mako.template import Template
+
 
 SESSION_KEY = '_cp_username'
 
@@ -21,17 +24,17 @@ def generate_salt():
 
 def check_credentials(username, password):
     """Verifies credentials for username and password.
-    Returns None on success or a string describing the error on failure"""        
+    Returns None on success or a string describing the error on failure"""
     db = cherrypy.request.db
     u = User.get_by_username(db, username)
     if u is None:
-        return u"Username %s is unknown to me." % username
-    
+        return u"Username or Password is invaild. Pleas try again."
+
     dk = hashlib.pbkdf2_hmac('sha256', password.encode(), u.salt, 100000)
     binascii.hexlify(dk)
-    
+
     if u.hash != dk:
-        return u"Incorrect password"
+        return u"Username or Password is invaild. Pleas try again."
 
 def check_auth(*args, **kwargs):
     """A tool that looks in config for 'auth.require'. If found and it
@@ -51,8 +54,8 @@ def check_auth(*args, **kwargs):
                     raise cherrypy.HTTPRedirect("/auth/login?from_page=%s" % get_parmas)
         else:
             # Send old page as from_page parameter
-            raise cherrypy.HTTPRedirect("/auth/login?from_page=%s" %get_parmas) 
-    
+            raise cherrypy.HTTPRedirect("/auth/login?from_page=%s" %get_parmas)
+
 cherrypy.tools.auth = cherrypy.Tool('before_handler', check_auth)
 
 def require(*conditions):
@@ -106,34 +109,39 @@ def all_of(*conditions):
         return True
     return check
 
+def get_user():
+    username = cherrypy.session.get(SESSION_KEY, None)
+    if username is None:
+        return None
+
+    db = cherrypy.request.db
+    u = User.get_by_username(db, username)
+
+    return u
+
 
 # Controller to provide login and logout actions
 
 class AuthController(object):
-    
+
     def on_login(self, username):
         """Called on successful login"""
-    
+
     def on_logout(self, username):
         """Called on logout"""
-    
-    def get_loginform(self, username, msg="Enter login information", from_page="/"):
+
+    def get_loginform(self, username, msg="", from_page="/"):
         username=escape(username, True)
         from_page=escape(from_page, True)
-        return """<html><body>
-            <form method="post" action="/auth/login">
-            <input type="hidden" name="from_page" value="%(from_page)s" />
-            %(msg)s<br />
-            Username: <input type="text" name="username" value="%(username)s" /><br />
-            Password: <input type="password" name="password" /><br />
-            <input type="submit" value="Log in" />
-        </body></html>""" % locals()
-    
+        template = Template(filename='templates/login.mako', module_directory=os.path.join(tourney.PROG_DIR, 'cache'))
+        params = { 'username' : username, 'from_page' : from_page, 'msg' : msg }
+        return template.render(**params)
+
     @cherrypy.expose
     def login(self, username=None, password=None, from_page="/"):
         if username is None or password is None:
             return self.get_loginform("", from_page=from_page)
-        
+
         error_msg = check_credentials(username, password)
         if error_msg:
             return self.get_loginform(username, error_msg, from_page)
@@ -142,7 +150,7 @@ class AuthController(object):
             cherrypy.session[SESSION_KEY] = cherrypy.request.login = username
             self.on_login(username)
             raise cherrypy.HTTPRedirect(from_page or "/")
-    
+
     @cherrypy.expose
     def logout(self, from_page="/"):
         sess = cherrypy.session
