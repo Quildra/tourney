@@ -37,12 +37,23 @@ def initialise(options={}):
 
     from lib.tools.template import MakoTool
     cherrypy.tools.template = MakoTool(os.path.join(tourney.PROG_DIR, 'templates'), os.path.join(tourney.PROG_DIR, 'cache'))
+    
+    # Database access tool
+    from lib.tools.db import SATool
+    cherrypy.tools.db = SATool()
 
     cherrypy.engine.timeout_monitor.unsubscribe()
 
-    from tourney.routing import App
+    from tourney.routing import App, Admin, Debug
     webapp = App()
+    webapp.admin = Admin()
+    webapp.debug = Debug()
     cherrypy.tree.mount(webapp, options['http_root'], config = conf)
+    
+    # Database connection management plugin
+    from lib.plugins.db import SAEnginePlugin
+    engine.db = SAEnginePlugin(engine)
+    engine.db.subscribe()
 
     try:
         cherrypy.process.servers.check_port(options['http_host'], options['http_port'])
@@ -52,7 +63,10 @@ def initialise(options={}):
         if hasattr(engine, "console_control_handler"):
             engine.console_control_handler.subscribe()
 
-        cherrypy.server.start()
+        #cherrypy.server.start()
+        engine.signals.subscribe()
+        engine.start()
+        engine.block()
     except IOError:
         print('Failed to start on port: %i. Is something else running?' % (options['http_port']))
         sys.exit(0)
