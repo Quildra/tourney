@@ -25,6 +25,23 @@ from lib.modules.simple_auth import get_user
       </a>
       %endif
       % if user is not None:
+      <div class="ui card">
+        <div class="image">
+          <img src="" alt="" />
+        </div>
+        <div class="content">
+          <a class="header">${user.username}</a>
+          <div class="meta">
+            <span class="date">user.join_date</span>
+          </div>
+          <div class="meta">
+            <span class="">Role</span>
+          </div>
+        </div>
+      </div>
+      % endif
+      <!-- other things go here -->
+      % if user is not None:
       <a class="ui item" href="/auth/logout">
         <i class="sign out icon"></i>
         Sign Out
