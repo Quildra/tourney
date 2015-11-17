@@ -5,3 +5,4 @@ tourney.egg-info/
 tourney/cache/
 tourney/config.ini
 tourney/Kapow.bat
+tourney/tourney.db
