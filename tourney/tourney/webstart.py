@@ -37,19 +37,17 @@ def initialise(options={}):
 
     from lib.tools.template import MakoTool
     cherrypy.tools.template = MakoTool(os.path.join(tourney.PROG_DIR, 'templates'), os.path.join(tourney.PROG_DIR, 'cache'))
-    
+
     # Database access tool
     from lib.tools.db import SATool
     cherrypy.tools.db = SATool()
 
     cherrypy.engine.timeout_monitor.unsubscribe()
 
-    from tourney.routing import App, Admin, Debug
+    from tourney.routing import App
     webapp = App()
-    webapp.admin = Admin()
-    webapp.debug = Debug()
     cherrypy.tree.mount(webapp, options['http_root'], config = conf)
-    
+
     # Database connection management plugin
     from lib.plugins.db import SAEnginePlugin
     engine.db = SAEnginePlugin(engine)
