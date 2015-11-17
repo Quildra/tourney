@@ -36,19 +36,13 @@ def initialise(options={}):
     sys.path.insert(0, tourney.PROG_DIR)
 
     from lib.tools.template import MakoTool
-    cherrypy.tools.render = MakoTool()
+    cherrypy.tools.template = MakoTool(os.path.join(tourney.PROG_DIR, 'templates'), os.path.join(tourney.PROG_DIR, 'cache'))
 
     cherrypy.engine.timeout_monitor.unsubscribe()
 
-    from tourney.routing import WebInterface
-    webapp = WebInterface()
+    from tourney.routing import App
+    webapp = App()
     cherrypy.tree.mount(webapp, options['http_root'], config = conf)
-
-    # Template engine plugin
-    from lib.plugins.template import MakoTemplatePlugin
-    engine.mako = MakoTemplatePlugin(engine, os.path.join(tourney.PROG_DIR, 'templates'),
-                                     os.path.join(tourney.PROG_DIR, 'cache'))
-    engine.mako.subscribe()
 
     try:
         cherrypy.process.servers.check_port(options['http_host'], options['http_port'])

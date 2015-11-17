@@ -1,34 +1,61 @@
 import os.path
 import sys
+import tempfile
+import types
 
 import cherrypy
 import mako
 from mako import exceptions
 from mako.template import Template
+from mako.lookup import TemplateLookup
 
 __all__ = ['MakoTool']
 
 class MakoTool(cherrypy.Tool):
-    def __init__(self):
-        cherrypy.Tool.__init__(self, 'before_finalize',
-                               self._render,
-                               priority=30)
+    def __init__(self,base_dir=None, base_cache_dir=None,collection_size=50, encoding='utf-8'):
+        cherrypy.Tool.__init__(self, 'before_handler', self.render)
+        self.base_dir = base_dir
+        self.base_cache_dir = base_cache_dir or tempfile.gettempdir()
+        self.encoding = encoding
+        self.collection_size = collection_size
+        self.lookup = TemplateLookup(directories=self.base_dir,
+                                     module_directory=self.base_cache_dir,
+                                     input_encoding=self.encoding,
+                                     output_encoding=self.encoding,
+                                     collection_size=self.collection_size)
+        
+    
+    def __call__(self, *args, **kwargs):
+        if args and isinstance(args[0], (types.FunctionType, types.MethodType)):
+            # @template
+            args[0].exposed = True
+            return cherrypy.Tool.__call__(self, **kwargs)(args[0])
+        else:
+            # @template()
+            def wrap(f):
+                f.exposed = True
+                return cherrypy.Tool.__call__(self, *args, **kwargs)(f)
+            return wrap
 
-    def _render(self, template=None, debug=False):
-        if cherrypy.response.status != None:
-            if cherrypy.response.status > 399:
-                return
+    def render(self, name = None):
+        cherrypy.request.config['template'] = name
 
-        # retrieve the data returned by the handler
-        data = cherrypy.response.body or {}
-        template = cherrypy.engine.publish("lookup-template", template).pop()
+        handler = cherrypy.serving.request.handler
+        def wrap(*args, **kwargs):
+          return self._render(handler, *args, **kwargs)
+        cherrypy.serving.request.handler = wrap
+    
+    def _render(self, handler, *args, **kwargs):
+        template = cherrypy.request.config['template']
+        if not template:
+            parts = []
+            if hasattr(handler.callable, '__self__'):
+                parts.append(handler.callable.__self__.__class__.__name__.lower())
+            if hasattr(handler.callable, '__name__'):
+                parts.append(handler.callable.__name__.lower())
+            template = u'/'.join(parts)
 
-        if template and isinstance(data, dict):
-            # dump the template using the dictionary
-            if debug:
-                try:
-                    cherrypy.response.body = template.render(**data)
-                except:
-                    cherrypy.response.body = exceptions.html_error_template().render()
-            else:
-                cherrypy.response.body = template.render(**data)
+        data     = handler(*args, **kwargs) or {}
+        renderer = self.lookup.get_template(u'{0}.mako'.format(template))
+
+        return renderer.render(**data)
