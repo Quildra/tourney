@@ -18,5 +18,5 @@ class User(Base):
         return session.query(User).filter(User.username==uid).first()
 
     @staticmethod
-    def all_(session):
+    def all(session):
         return session.query(User)
