@@ -7,12 +7,19 @@ from lib.modules.simple_auth import AuthController, require, member_of, name_is,
 
 from lib.models.user import User
 
+class AdminEvents(object):
+    @cherrypy.tools.template(name="admin/events/index")
+    def index(self):
+        pass
+
 class Admin(object):
 
     _cp_config = {
         'auth.require': [member_of('admin')],
         'tools.db.on': True
     }
+    
+    events = AdminEvents();
 
     @cherrypy.tools.template
     def index(self):
