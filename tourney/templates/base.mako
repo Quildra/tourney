@@ -40,6 +40,10 @@ from lib.modules.simple_auth import get_user
         </div>
       </div>
       % endif
+	  <a class="ui item" href="/">
+        <i class="home icon"></i>
+        Home
+      </a>
       <!-- other things go here -->
       % if user is not None:
       <a class="ui item" href="/auth/logout">
@@ -60,7 +64,7 @@ from lib.modules.simple_auth import get_user
             </div>
           </div>
         </div>
-        <div class="main container">
+        <div class="ui stackable very relaxed center aligned grid container">
           <div id="subhead">
             ${next.headerIncludes()}
           </div>
