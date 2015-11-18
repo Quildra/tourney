@@ -1,6 +1,8 @@
 import threading
 import os
 from lib.configobj.configobj import ConfigObj
+from lib.configobj.helpers import check_section, check_setting_str, check_setting_int
+from lib.modules.plugin_manager import PluginManager
 
 #General
 CONFIG_VERSION = None
@@ -16,48 +18,10 @@ FULL_PATH = None
 PROG_DIR = None
 CONFIG_FILE = None
 CFG = None
+PLUGIN_MANAGER = PluginManager()
 INIT_LOCK = threading.Lock()
 
 __INITIALISED__ = False
-
-def CheckSection(sec):
-    """ Check if INI section exists, if not create it """
-    try:
-        CFG[sec]
-        return True
-    except:
-        CFG[sec] = {}
-        return False
-
-def check_setting_int(config, cfg_name, item_name, def_val):
-    try:
-        my_val = int(config[cfg_name][item_name])
-    except:
-        my_val = def_val
-        try:
-            config[cfg_name][item_name] = my_val
-        except:
-            config[cfg_name] = {}
-            config[cfg_name][item_name] = my_val
-##    logger.debug(item_name + " -> " + str(my_val))
-    return my_val
-
-def check_setting_str(config, cfg_name, item_name, def_val, log=True):
-    try:
-        my_val = config[cfg_name][item_name]
-    except:
-        my_val = def_val
-        try:
-            config[cfg_name][item_name] = my_val
-        except:
-            config[cfg_name] = {}
-            config[cfg_name][item_name] = my_val
-
-##    if log:
-##        logger.debug(item_name + " -> " + my_val)
-##    else:
-##        logger.debug(item_name + " -> ******")
-    return my_val
 
 def initialise():
     with INIT_LOCK:
@@ -66,7 +30,7 @@ def initialise():
         if __INITIALISED__:
             return False
 
-        CheckSection('General')
+        check_section(CFG,'General')
 
         try:
             HTTP_PORT = check_setting_int(CFG, 'General', 'http_port', 8091)
@@ -88,6 +52,9 @@ def initialise():
 
         if not os.path.exists(LOG_DIR):
             os.makedirs(LOG_DIR)
+            
+        PLUGIN_MANAGER.locate_plugins(os.path.join(PROG_DIR, 'extentions'))
+        PLUGIN_MANAGER.register_plugins()
 
         config_write()
 
