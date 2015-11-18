@@ -18,7 +18,7 @@ class Admin(object):
         'auth.require': [member_of('admin')],
         'tools.db.on': True
     }
-    
+
     events = AdminEvents();
 
     @cherrypy.tools.template
