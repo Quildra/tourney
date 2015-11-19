@@ -1,6 +1,6 @@
 <%inherit file="/base.mako"/>
 
-<%def name="menu_items()">
+<%block name="menu_items">
 <a class="ui item" href="/admin/events">
   <b>Events</b>
 </a>
@@ -13,8 +13,8 @@
 <a class="ui item" href="/admin/plugins">
   <b>Plugins</b>
 </a>
-</%def>
+</%block>
 
-<%def name="body()">
+<%block name="body">
 
-</%def>
+</%block>
