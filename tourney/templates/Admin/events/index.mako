@@ -5,16 +5,17 @@
 </%block>
 
 <%block name="body">
-<div>
-	Events, YAY!
-</div>
+	<h2 class="ui center aligned icon header">
+		<i class="circular calendar icon"></i>
+		Events
+	</h2>
 	<div class="ui container">
 		<a class="ui fluid button" onclick="$('#createnew_body').slideToggle('slow');">
-			Create New
+			New Event
 		</a>
 		<div class="ui segment" id="createnew_body" style="display: none;">
 			<div id="create_form">
-				<form method="post" action="/admin/event/create" id="event_create_new" class="ui form">
+				<form method="post" action="/admin/events/create" id="event_create_new" class="ui form">
 					<div class="two fields">
 						<div class="required field">
 							<label>Event Name</label>
@@ -44,27 +45,44 @@
 				</form>
 			</div>
 		</div>
+		<div class="ui horizontal divider">
+			Active Events
+		</div>
+		% for event in active_events:
+			<div>
+				${event.name}
+			</div>
+		% endfor
+		<div class="ui horizontal divider">
+			Future Events
+		</div>
+		<div class="ui horizontal divider">
+			Past Events
+		</div>
 
 	</div>
 </%block>
 
 <%block name="javascript_includes">
-	<script type="text/javascript" src="/js/moment.js"></script>
+	<script type="text/javascript" src="/js/moment-with-locales.js"></script>
 	<script type="text/javascript" src="/js/daterangepicker.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() 
 			{
+				daterangepicker_now = moment()
 				moment.locale("en-GB");
 				current_date = moment().format('L');
 				document.getElementsByName("start_date")[0].value = current_date;
 				$('input[name="start_date"]').daterangepicker(
 					{
-						singleDatePicker: true
+						singleDatePicker: true,
+						startDate: daterangepicker_now
 					}
 				);
 				$('input[name="end_date"]').daterangepicker(
 					{
-						singleDatePicker: true
+						singleDatePicker: true,
+						startDate: daterangepicker_now
 					}
 				);
 				$('.ui.form').form(

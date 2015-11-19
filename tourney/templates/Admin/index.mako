@@ -2,16 +2,20 @@
 
 <%block name="menu_items">
 <a class="ui item" href="/admin/events">
-  <b>Events</b>
+	<i class="calendar icon"></i>
+	<b>Event Admin</b>
 </a>
 <a class="ui item" href="/admin/users">
-  <b>Users</b>
+	<i class="users icon"></i>
+	<b>User Admin</b>
 </a>
 <a class="ui item" href="/admin/players">
-  <b>Players</b>
+	<i class="child icon"></i>
+	<b>Player Admin</b>
 </a>
 <a class="ui item" href="/admin/plugins">
-  <b>Plugins</b>
+	<i class="plug icon"></i>
+	<b>Plugin Admin</b>
 </a>
 </%block>
 

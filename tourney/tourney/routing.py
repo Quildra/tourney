@@ -2,15 +2,33 @@ import cherrypy
 import sys
 import hashlib
 import binascii
+import datetime
 
 from lib.modules.simple_auth import AuthController, require, member_of, name_is, generate_salt
 
 from lib.models.user import User
+from lib.models.event import Event
 
 class AdminEvents(object):
     @cherrypy.tools.template(name="admin/events/index")
     def index(self):
-        pass
+        db = cherrypy.request.db
+        active_events = Event.bob(db, 3)
+            
+        return {'active_events': active_events}
+        
+    @cherrypy.expose
+    def create(self, **kwargs):
+        
+        new_event = Event()
+        new_event.name = kwargs['event_name']
+        
+        new_event.start_date = datetime.datetime.strptime(kwargs['start_date'],"%d/%m/%Y").date()
+        db = cherrypy.request.db
+        db.add(new_event)
+        
+        raise cherrypy.HTTPRedirect("/admin/events/")
+        
 
 class Admin(object):
 
