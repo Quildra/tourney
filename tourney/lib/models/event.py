@@ -16,5 +16,13 @@ class Event(Base):
     end_date = Column(Date, nullable=True)
     
     @staticmethod
-    def bob(session, date):
-        return session.query(Event).filter(Event.start_date <= datetime.date.today()).all()
+    def active_events(session):
+        return session.query(Event).filter(Event.start_date <= datetime.date.today(), Event.end_date >= datetime.date.today()).all()
+        
+    @staticmethod
+    def future_events(session):
+        return session.query(Event).filter(Event.start_date > datetime.date.today()).all()
+        
+    @staticmethod
+    def past_events(session):
+        return session.query(Event).filter(Event.end_date < datetime.date.today()).all()
