@@ -13,17 +13,27 @@ class AdminEvents(object):
     @cherrypy.tools.template(name="admin/events/index")
     def index(self):
         db = cherrypy.request.db
-        active_events = Event.bob(db, 3)
+        active_events = Event.active_events(db)
+        future_events = Event.future_events(db)
+        past_events = Event.past_events(db)
             
-        return {'active_events': active_events}
+        return {'active_events': active_events, 'future_events': future_events, 'past_events': past_events,}
         
     @cherrypy.expose
     def create(self, **kwargs):
         
         new_event = Event()
         new_event.name = kwargs['event_name']
-        
         new_event.start_date = datetime.datetime.strptime(kwargs['start_date'],"%d/%m/%Y").date()
+        
+        if kwargs['uid'] != "":
+            new_event.id = kwargs['uid']
+            
+        if kwargs['end_date'] != "":
+            new_event.end_date = datetime.datetime.strptime(kwargs['end_date'],"%d/%m/%Y").date()
+        else:
+            new_event.end_date = new_event.start_date
+        
         db = cherrypy.request.db
         db.add(new_event)
         

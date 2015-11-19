@@ -56,10 +56,19 @@
 		<div class="ui horizontal divider">
 			Future Events
 		</div>
+		% for event in future_events:
+			<div>
+				${event.name}
+			</div>
+		% endfor
 		<div class="ui horizontal divider">
 			Past Events
 		</div>
-
+		% for event in past_events:
+			<div>
+				${event.name}
+			</div>
+		% endfor
 	</div>
 </%block>
 
@@ -75,12 +84,14 @@
 				document.getElementsByName("start_date")[0].value = current_date;
 				$('input[name="start_date"]').daterangepicker(
 					{
+						format: 'DD/MM/YYYY',
 						singleDatePicker: true,
 						startDate: daterangepicker_now
 					}
 				);
 				$('input[name="end_date"]').daterangepicker(
 					{
+						format: 'DD/MM/YYYY',
 						singleDatePicker: true,
 						startDate: daterangepicker_now
 					}
