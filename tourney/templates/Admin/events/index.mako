@@ -1,5 +1,36 @@
 <%inherit file="/admin/index.mako"/>
 
+<%def name="event_template(event)">
+	<div class="ui segment">
+		<h2 class="ui header">
+			<div class="content">
+				${event.name}
+		  </div>
+		</h2>
+		<div class="ui equal width grid">
+			<div class="equal width row">
+				<div class="column">
+					Start Date: ${event.start_date.strftime('%d/%m/%Y')}
+				</div>
+				<div class="column">
+					End Date: ${event.end_date.strftime('%d/%m/%Y')}
+				</div>
+			</div>
+		</div>
+		<div>
+			Stats go here!
+		</div>
+		<div class="ui right aligned grid">
+		<div class="right floated column">
+			<button class="blue ui button">Manage Event</button>
+			<button class="negative ui button" onclick="document.getElementById('modal_content').innerHTML = 'Are you sure you wish to delete the &quot;${event.name}&quot; event?'; $('.ui.basic.modal').modal({closable : false, onApprove : function() { $.post('/admin/events/delete', { uid: '${event.id}' }); }}).modal('show');" >
+				Delete Event
+			</button>
+		</div>
+		</div>
+	</div>
+</%def>
+
 <%block name="head">
 	<link rel="stylesheet" type="text/css" href="/css/daterangepicker.css" />
 </%block>
@@ -49,26 +80,40 @@
 			Active Events
 		</div>
 		% for event in active_events:
-			<div>
-				${event.name}
-			</div>
+			${event_template(event)}
 		% endfor
 		<div class="ui horizontal divider">
 			Future Events
 		</div>
 		% for event in future_events:
-			<div>
-				${event.name}
-			</div>
+			${event_template(event)}
 		% endfor
 		<div class="ui horizontal divider">
 			Past Events
 		</div>
 		% for event in past_events:
-			<div>
-				${event.name}
-			</div>
+			${event_template(event)}
 		% endfor
+	</div>
+	
+	<div class="ui small basic modal">
+		<div class="ui icon header">
+			<i class="trash icon"></i>
+			Delete Event
+		</div>
+		<div>
+			<p id="modal_content"></p>
+		</div>
+		<div class="actions">
+			<div class="ui green ok inverted button">
+				<i class="checkmark icon"></i>
+				Yes
+			</div>
+			<div class="ui basic cancel inverted button">
+				<i class="remove icon"></i>
+				No
+			</div>
+		</div>
 	</div>
 </%block>
 

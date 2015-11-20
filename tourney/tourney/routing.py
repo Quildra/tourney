@@ -39,6 +39,11 @@ class AdminEvents(object):
         
         raise cherrypy.HTTPRedirect("/admin/events/")
         
+    @cherrypy.expose
+    def delete(self, **kwargs):
+        
+        raise cherrypy.HTTPRedirect("/admin/events/")
+        
 
 class Admin(object):
 
