@@ -41,7 +41,11 @@ class AdminEvents(object):
         
     @cherrypy.expose
     def delete(self, **kwargs):
-        
+        db = cherrypy.request.db
+        event = Event.get_by_id(db, kwargs['uid'])
+        if event is not None:
+            db.delete(event)
+            
         raise cherrypy.HTTPRedirect("/admin/events/")
         
 
