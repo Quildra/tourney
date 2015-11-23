@@ -13,7 +13,7 @@
 		Event Details
 	</div>
 	<div class="ui segment container">
-		<form method="post" action="/admin/events/create" id="event_create_new" class="ui form">
+		<form method="post" action="/admin/events/update" class="ui form">
 			<div class="two fields">
 				<div class="field">
 					<label>Event Name</label>
