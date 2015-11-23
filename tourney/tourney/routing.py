@@ -40,6 +40,15 @@ class AdminEvents(object):
         db.add(new_event)
         
         raise cherrypy.HTTPRedirect("/admin/events/")
+    
+    @cherrypy.tools.template(name="admin/events/manage")
+    def manage(self, event_id = None,**kwargs):
+        if event_id is None:
+            raise cherrypy.HTTPRedirect("/admin/events/")
+            
+        db = cherrypy.request.db
+        event = Event.get_by_id(db,event_id)
+        return {'selected_event': event}
         
     @cherrypy.expose
     def delete(self, **kwargs):

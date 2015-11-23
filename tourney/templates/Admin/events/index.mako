@@ -22,7 +22,7 @@
 		</div>
 		<div class="ui right aligned grid">
 		<div class="right floated column">
-			<button class="blue ui button">Manage Event</button>
+			<button class="blue ui button" onclick="location.href='/admin/events/manage?event_id=${event.id}'">Manage Event</button>
 			<button class="negative ui button" onclick="document.getElementById('modal_content').innerHTML = 'Are you sure you wish to delete the &quot;${event.name}&quot; event?'; $('.ui.basic.modal').modal({closable : false, onApprove : function() { $.post('/admin/events/delete', { uid: '${event.id}' }); location.reload(true);}}).modal('show');" >
 				Delete Event
 			</button>
