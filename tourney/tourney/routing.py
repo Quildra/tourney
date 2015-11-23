@@ -3,11 +3,13 @@ import sys
 import hashlib
 import binascii
 import datetime
+from datetime import date
 
 from lib.modules.simple_auth import AuthController, require, member_of, name_is, generate_salt
 
 from lib.models.user import User
 from lib.models.event import Event
+from lib.models.role import Role
 
 class AdminEvents(object):
     @cherrypy.tools.template(name="admin/events/index")
@@ -52,7 +54,7 @@ class AdminEvents(object):
 class Admin(object):
 
     _cp_config = {
-        'auth.require': [member_of('admin')],
+        'auth.require': [member_of('Admin')],
         'tools.db.on': True
     }
 
@@ -71,8 +73,9 @@ class Debug(object):
         salt = generate_salt()
         dk = hashlib.pbkdf2_hmac('sha256', b'secret', salt, 100000)
         binascii.hexlify(dk)
-
-        joe = User(username='joe', hash=dk, salt=salt)
+        
+        today = date.today()
+        joe = User(username='joe', hash=dk, salt=salt, email='joe@joe.com', join_date=today, role_id=1)
         db.add(joe)
         raise cherrypy.HTTPRedirect("/")
 

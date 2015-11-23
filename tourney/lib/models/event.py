@@ -17,7 +17,7 @@ class Event(Base):
     
     @staticmethod
     def get_by_id(session, id):
-        return session.query(Event).filter(Event.id == id).first()
+        return session.query(Event).filter(Event.id == id).one()
     
     @staticmethod
     def active_events(session):

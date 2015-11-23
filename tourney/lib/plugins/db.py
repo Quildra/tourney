@@ -64,9 +64,20 @@ class SAEnginePlugin(plugins.SimplePlugin):
     
     def create_all(self):
         self.bus.log('Creating database')
-        from lib.models.user import User
         Base.metadata.create_all(self.sa_engine)
+        #self.seed_data()
         
     def destroy_all(self):
         self.bus.log('Destroying database')
         Base.metadata.drop_all(self.sa_engine)
+        
+    def seed_data(self):
+        session = self.bind()
+        # Populate the Roles table
+        from lib.models.role import Role
+        if Role.all(session).count() == 0:
+            r = Role(name="Admin")
+            session.add(r)
+            r = Role(name="Member")
+            session.add(r)
+            session.commit()

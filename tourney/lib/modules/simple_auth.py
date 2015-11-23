@@ -78,11 +78,20 @@ def require(*conditions):
 #
 # Define those at will however suits the application.
 
-def member_of(groupname):
+def member_of(role_name):
     def check():
-        # replace with actual check if <username> is in <groupname>
-        return cherrypy.request.login == 'joe' and groupname == 'admin'
+        u = get_user()
+        if u is None:
+            return False
+        return u.role.name == role_name
     return check
+    
+def is_member_of(role_name):
+    u = get_user()
+    if u is None:
+        return False
+    return u.role.name == role_name
+
 
 def name_is(reqd_username):
     return lambda: reqd_username == cherrypy.request.login

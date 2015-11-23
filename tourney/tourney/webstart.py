@@ -64,6 +64,7 @@ def initialise(options={}):
         #cherrypy.server.start()
         engine.signals.subscribe()
         engine.start()
+        engine.db.seed_data()
         engine.block()
     except IOError:
         print('Failed to start on port: %i. Is something else running?' % (options['http_port']))

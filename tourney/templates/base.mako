@@ -3,7 +3,7 @@
 <%!
 import tourney
 import cherrypy
-from lib.modules.simple_auth import get_user
+from lib.modules.simple_auth import get_user, is_member_of
 %>
 
 <html>
@@ -32,10 +32,10 @@ from lib.modules.simple_auth import get_user
           <div class="content">
             <a class="header">${user.username}</a>
             <div class="meta">
-              <span class="date">user.join_date</span>
+              <span class="date">${user.join_date.strftime('%d/%m/%Y')}</span>
             </div>
             <div class="meta">
-              <span class="">Role</span>
+              <span class="">${user.role.name}</span>
             </div>
           </div>
         </div>
@@ -44,6 +44,12 @@ from lib.modules.simple_auth import get_user
           <i class="home icon"></i>
           Home
         </a>
+		% if is_member_of('Admin') == True:
+		<a class="ui item" href="/admin">
+          <i class="settings icon"></i>
+          Admin
+        </a>
+		% endif
         <%block name="menu_items"/>
         % if user is not None:
         <a class="ui item" href="/auth/logout">
