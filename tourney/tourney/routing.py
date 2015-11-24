@@ -3,15 +3,40 @@ import sys
 import hashlib
 import binascii
 import datetime
-from datetime import date
+from datetime import date, time
 
 from lib.modules.simple_auth import AuthController, require, member_of, name_is, generate_salt
 
 from lib.models.user import User
 from lib.models.event import Event
 from lib.models.role import Role
+from lib.models.tournament import Tournament
 
 import tourney
+
+class AdminTournaments(object):
+    @cherrypy.expose
+    def create(self, **kwargs):
+        print(kwargs)
+        tournament = Tournament()
+        tournament.event_id = kwargs['event_id']
+        tournament.game_system_id = kwargs['game_system']
+        tournament.pairing_system_id = kwargs['pairing_system']
+        #tournament.reg_start_time = datetime.datetime.strptime(kwargs['reg_start_time'],"%d/%m/%Y").time()
+        #tournament.reg_end_time = datetime.datetime.strptime(kwargs['reg_end_time'],"%d/%m/%Y").time()
+        #tournament.round_one_start_time = datetime.datetime.strptime(kwargs['round_one_start'],"%d/%m/%Y").time()
+        tournament.player_limit = kwargs['player_limit'] 
+        #if kwargs['team_event'] is not None:
+        #    tournament.team_event = True
+        #else:
+        #    tournament.team_event = False
+        tournament.players_per_team = kwargs['players_per_team']
+        tournament.description = kwargs['description']
+        
+        db = cherrypy.request.db
+        db.add(tournament)
+    
+        raise cherrypy.HTTPRedirect("/admin/events/manage?event_id=" + tournament.event_id)
 
 class AdminEvents(object):
     @cherrypy.tools.template(name="admin/events/index")
@@ -73,6 +98,7 @@ class Admin(object):
     }
 
     events = AdminEvents();
+    tournaments = AdminTournaments();
 
     @cherrypy.tools.template
     def index(self):

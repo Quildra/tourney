@@ -50,7 +50,8 @@
 			Add Tournament
 		</a>
 		<div class="ui segment" id="add_tournament_body" style="display: none;">
-			<form method="post" action="/admin/tournament/create" id="event_create_new" class="ui form">
+			<form method="post" action="/admin/tournaments/create" class="ui form">
+				<input type="hidden" name="event_id" value="${selected_event.id}">
 				<div class="required field">
 					<label>Game System</label>
 					<div class="ui dropdown selection">

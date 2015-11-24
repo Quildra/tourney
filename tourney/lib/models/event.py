@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy import Column
 from sqlalchemy.types import Unicode, Integer, Date
+from sqlalchemy.orm import relationship, backref
 
 import datetime
 
@@ -14,6 +15,8 @@ class Event(Base):
     name = Column(Unicode, nullable=False)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=True)
+    
+    tournaments = relationship("Tournament", order_by="Tournament.id", backref="tournament")
     
     @staticmethod
     def get_by_id(session, id):
