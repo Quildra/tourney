@@ -50,11 +50,11 @@
 			Add Tournament
 		</a>
 		<div class="ui segment" id="add_tournament_body" style="display: none;">
-			<form method="post" action="/admin/events/create" id="event_create_new" class="ui form">
+			<form method="post" action="/admin/tournament/create" id="event_create_new" class="ui form">
 				<div class="required field">
 					<label>Game System</label>
 					<div class="ui dropdown selection">
-						<input type="hidden" name="gender">
+						<input type="hidden" name="game_system">
 						<div class="default text">Select a game system</div>
 						<i class="dropdown icon"></i>
 						<div class="menu">
@@ -67,7 +67,7 @@
 				<div class="required field">
 					<label>Pairing System</label>
 					<div class="ui dropdown selection">
-						<input type="hidden" name="gender">
+						<input type="hidden" name="pairing_system">
 						<div class="default text">Select a pairing system</div>
 						<i class="dropdown icon"></i>
 						<div class="menu">
@@ -100,18 +100,18 @@
 					</div>
 					<div class="inline field">
 						<div class="ui toggle checkbox">
-							<input type="checkbox" tabindex="0" class="hidden">
+							<input type="checkbox" tabindex="0" class="hidden" name="team_event">
 							<label>Team Event</label>
 						</div>
 					</div>
-					<div class="disabled field" id="players_per_team">
+					<div class="disabled field" id="players_per_team_div">
 						<label>Players Per Team</label>
-						<input type="number" id="players_per_team_input" disabled/>
+						<input type="number" id="players_per_team" name="players_per_team" disabled/>
 					</div>
 				</div>
 				<div class="field">
 					<label>Description</label>
-					<textarea></textarea>
+					<textarea name="description"></textarea>
 				</div>
 
 				<button type="submit" class="ui labeled icon positive button">
@@ -152,12 +152,12 @@
 				$('.ui.dropdown').dropdown();
 				$('.ui.checkbox').checkbox().first().checkbox({
 					onChecked: function() {
-						$('#players_per_team').removeClass("disabled");
-						$('#players_per_team_input').prop('disabled', false);
+						$('#players_per_team_div').removeClass("disabled");
+						$('#players_per_team').prop('disabled', false);
 					},
 					onUnchecked: function() {
-						$('#players_per_team').addClass("disabled");
-						$('#players_per_team_input').prop('disabled', true);
+						$('#players_per_team_div').addClass("disabled");
+						$('#players_per_team').prop('disabled', true);
 					}
 				});
 			}
