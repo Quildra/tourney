@@ -56,10 +56,9 @@ class PluginManager():
     def register_plugins(self):
         for plugin in Plugin.__subclasses__():
             self.loaded_plugins[plugin.plugin_name] = plugin
-            plugin.message()
         
-    def get_plugins(group=None):
-        pass
+    def get_plugins(self,group=None):
+        return self.loaded_plugins
         
     def get_plugin(plugin_name):
         pass

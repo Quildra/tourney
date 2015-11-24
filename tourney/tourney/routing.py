@@ -11,6 +11,8 @@ from lib.models.user import User
 from lib.models.event import Event
 from lib.models.role import Role
 
+import tourney
+
 class AdminEvents(object):
     @cherrypy.tools.template(name="admin/events/index")
     def index(self):
@@ -48,7 +50,10 @@ class AdminEvents(object):
             
         db = cherrypy.request.db
         event = Event.get_by_id(db,event_id)
-        return {'selected_event': event}
+        
+        plugins = tourney.PLUGIN_MANAGER.get_plugins("Game system")
+        
+        return {'selected_event': event, 'game_systems': plugins}
         
     @cherrypy.expose
     def delete(self, **kwargs):

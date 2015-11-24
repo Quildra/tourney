@@ -45,6 +45,85 @@
 	<div class="ui horizontal divider">
 		Tournaments
 	</div>
+	<div class="ui container">
+		<a class="ui fluid button" onclick="$('#add_tournament_body').slideToggle('slow');">
+			Add Tournament
+		</a>
+		<div class="ui segment" id="add_tournament_body" style="display: none;">
+			<form method="post" action="/admin/events/create" id="event_create_new" class="ui form">
+				<div class="required field">
+					<label>Game System</label>
+					<div class="ui dropdown selection">
+						<input type="hidden" name="gender">
+						<div class="default text">Select a game system</div>
+						<i class="dropdown icon"></i>
+						<div class="menu">
+							% for k,v in game_systems.items():
+								<div class="item" data-value="${k}">${v.game_system}</div>
+							% endfor
+						</div>
+					</div>
+				</div>
+				<div class="required field">
+					<label>Pairing System</label>
+					<div class="ui dropdown selection">
+						<input type="hidden" name="gender">
+						<div class="default text">Select a pairing system</div>
+						<i class="dropdown icon"></i>
+						<div class="menu">
+							<div class="item" data-value="round_robin">Round Robin</div>
+							<div class="item" data-value="swiss">Swiss</div>
+							<div class="item" data-value="single_elimination">Single Elimination</div>
+							<div class="item" data-value="double_elimination">Double Elimination</div>
+						</div>
+					</div>
+				</div>
+				<div class="three fields">
+					<div class="field">
+						<label>Registration Begins</label>
+						<input type="text" name="reg_start_time" />
+					</div>
+					<div class="field">
+						<label>Registration Ends</label>
+						<input type="text" name="reg_end_time" />
+					</div>
+					<div class="required field">
+						<label>Round One Starts</label>
+						<input type="text" name="round_one_start" />
+					</div>
+				</div>
+				
+				<div class="three fields">
+					<div class="field">
+						<label>Player Limit</label>
+						<input type="number" name="player_limit" />
+					</div>
+					<div class="inline field">
+						<div class="ui toggle checkbox">
+							<input type="checkbox" tabindex="0" class="hidden">
+							<label>Team Event</label>
+						</div>
+					</div>
+					<div class="disabled field" id="players_per_team">
+						<label>Players Per Team</label>
+						<input type="number" id="players_per_team_input" disabled/>
+					</div>
+				</div>
+				<div class="field">
+					<label>Description</label>
+					<textarea></textarea>
+				</div>
+
+				<button type="submit" class="ui labeled icon positive button">
+					<i class="checkmark icon"></i>
+					Create
+				</button>
+			</form>
+		</div>
+		<div class="ui horizontal divider">
+			Existing Tournaments
+		</div>
+	</div>
 </%block>
 
 <%block name="javascript_includes">
@@ -70,21 +149,17 @@
 						startDate: daterangepicker_now
 					}
 				);
-				$('.ui.form').form(
-				{
-					fields: {
-					  text: {
-						identifier  : 'event_name',
-						rules: [
-						  {
-							type   : 'empty',
-							prompt : 'Please enter a value'
-						  }
-						]
-					  }
+				$('.ui.dropdown').dropdown();
+				$('.ui.checkbox').checkbox().first().checkbox({
+					onChecked: function() {
+						$('#players_per_team').removeClass("disabled");
+						$('#players_per_team_input').prop('disabled', false);
+					},
+					onUnchecked: function() {
+						$('#players_per_team').addClass("disabled");
+						$('#players_per_team_input').prop('disabled', true);
 					}
-				}
-				);
+				});
 			}
 		);
 	</script>
