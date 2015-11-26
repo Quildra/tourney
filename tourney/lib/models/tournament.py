@@ -12,6 +12,7 @@ __all__ = ['Tournament']
 class Tournament(Base):
     __tablename__ = 'tournament'
     id = Column(Integer, nullable=False, primary_key=True)
+    title = Column(Unicode)
     event_id = Column(Integer, ForeignKey('event.id'))
     game_system_id = Column(Unicode)
     pairing_system_id = Column(Unicode)

@@ -17,20 +17,21 @@ import tourney
 class AdminTournaments(object):
     @cherrypy.expose
     def create(self, **kwargs):
-        print(kwargs)
+
         tournament = Tournament()
+        tournament.title = kwargs['title']
         tournament.event_id = kwargs['event_id']
         tournament.game_system_id = kwargs['game_system']
         tournament.pairing_system_id = kwargs['pairing_system']
-        #tournament.reg_start_time = datetime.datetime.strptime(kwargs['reg_start_time'],"%d/%m/%Y").time()
-        #tournament.reg_end_time = datetime.datetime.strptime(kwargs['reg_end_time'],"%d/%m/%Y").time()
-        #tournament.round_one_start_time = datetime.datetime.strptime(kwargs['round_one_start'],"%d/%m/%Y").time()
+        tournament.reg_start_time = datetime.datetime.strptime(kwargs['reg_start_time'],"%H:%M").time()
+        tournament.reg_end_time = datetime.datetime.strptime(kwargs['reg_end_time'],"%H:%M").time()
+        tournament.round_one_start_time = datetime.datetime.strptime(kwargs['round_one_start'],"%H:%M").time()
         tournament.player_limit = kwargs['player_limit'] 
-        #if kwargs['team_event'] is not None:
-        #    tournament.team_event = True
-        #else:
-        #    tournament.team_event = False
-        tournament.players_per_team = kwargs['players_per_team']
+        if kwargs['team_event'] == "True":
+            tournament.team_event = True
+        else:
+            tournament.team_event = False
+        tournament.players_per_team = kwargs.get('players_per_team', 1)
         tournament.description = kwargs['description']
         
         db = cherrypy.request.db

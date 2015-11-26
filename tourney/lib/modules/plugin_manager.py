@@ -60,5 +60,6 @@ class PluginManager():
     def get_plugins(self,group=None):
         return self.loaded_plugins
         
-    def get_plugin(plugin_name):
-        pass
+    def get_plugin(self,plugin_name):
+        return self.loaded_plugins.get(plugin_name, None)
+        
