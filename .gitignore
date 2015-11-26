@@ -1,0 +1,8 @@
+build/
+dist/
+tourney.egg-info/
+*.pyc
+tourney/cache/
+tourney/config.ini
+tourney/Kapow.bat
+tourney/tourney.db
