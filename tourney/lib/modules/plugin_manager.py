@@ -45,6 +45,9 @@ class PluginManager():
         self.plugin_dir = plugin_dir
         
         # Add it to the path so we can import with out needing the full import path
+        if not os.path.exists(plugin_dir):
+            os.makedirs(plugin_dir)
+
         sys.path.insert(0, self.plugin_dir)
         
         # Look for the .plugin metadata files to load
